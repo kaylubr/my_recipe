@@ -1,9 +1,158 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useGetSeafoodMealsQuery } from '../features/recipeApi'
 import { setSearchQuery, setCurrentPage, toggleFavorite } from '../features/recipeSlice'
 
+// Inject Google Fonts once
+const injectFonts = () => {
+  if (document.getElementById('recipe-fonts')) return
+  const link = document.createElement('link')
+  link.id = 'recipe-fonts'
+  link.rel = 'stylesheet'
+  link.href =
+    'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap'
+  document.head.appendChild(link)
+}
+
+const styles = {
+  page: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '32px 24px',
+    fontFamily: "'DM Sans', sans-serif",
+  },
+  header: {
+    textAlign: 'center',
+    marginBottom: '36px',
+  },
+  title: {
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: '3rem',
+    fontWeight: 700,
+    letterSpacing: '-0.5px',
+    color: '#111',
+    margin: 0,
+  },
+  subtitle: {
+    color: '#888',
+    marginTop: '8px',
+    fontSize: '0.95rem',
+    fontStyle: 'italic',
+  },
+  searchWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '36px',
+  },
+  searchInput: {
+    width: '100%',
+    maxWidth: '500px',
+    padding: '12px 20px',
+    fontSize: '0.95rem',
+    fontFamily: "'DM Sans', sans-serif",
+    borderRadius: '999px',
+    border: '1.5px solid #ddd',
+    outline: 'none',
+    transition: 'border-color 0.2s',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+    gap: '24px',
+    marginBottom: '48px',
+  },
+  card: {
+    borderRadius: '14px',
+    overflow: 'hidden',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+    background: 'white',
+    display: 'flex',           // ← key fix
+    flexDirection: 'column',   // ← key fix
+    transition: 'box-shadow 0.2s, transform 0.2s',
+  },
+  imgWrap: {
+    position: 'relative',
+    flexShrink: 0,
+  },
+  img: {
+    width: '100%',
+    aspectRatio: '4/3',
+    objectFit: 'cover',
+    display: 'block',
+  },
+  favBtn: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: 'white',
+    border: 'none',
+    borderRadius: '50%',
+    width: '36px',
+    height: '36px',
+    fontSize: '1.1rem',
+    cursor: 'pointer',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'transform 0.15s',
+  },
+  cardBody: {
+    padding: '16px',
+    display: 'flex',           // ← key fix
+    flexDirection: 'column',   // ← key fix
+    flex: 1,                   // ← key fix: body grows to fill card
+  },
+  cardTitle: {
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: '0.95rem',
+    fontWeight: 500,
+    color: '#111',
+    margin: '0 0 12px 0',
+    flex: 1,                   // ← key fix: title takes remaining space
+    lineHeight: '1.4',
+  },
+  viewBtn: {
+    display: 'inline-block',
+    padding: '9px 18px',
+    background: '#1b4f6b',
+    color: 'white',
+    borderRadius: '8px',
+    fontSize: '0.85rem',
+    textDecoration: 'none',
+    fontFamily: "'DM Sans', sans-serif",
+    fontWeight: 500,
+    textAlign: 'center',
+    alignSelf: 'flex-start',  // ← key fix: button stays at bottom
+    marginTop: 'auto',        // ← key fix
+    transition: 'background 0.2s',
+  },
+  pagination: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '8px',
+    flexWrap: 'wrap',
+  },
+  pageBtn: (active, disabled) => ({
+    padding: '8px 14px',
+    borderRadius: '8px',
+    border: '1.5px solid #ddd',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    background: active ? '#1b4f6b' : 'white',
+    color: active ? 'white' : '#333',
+    fontWeight: active ? 600 : 400,
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: '0.9rem',
+    opacity: disabled ? 0.45 : 1,
+    transition: 'background 0.15s',
+  }),
+}
+
 const HomePage = () => {
+  useEffect(() => { injectFonts() }, [])
+
   const dispatch = useDispatch()
   const { searchQuery, currentPage, itemsPerPage, favorites } = useSelector((s) => s.recipes)
   const { data: meals = [], isLoading, isError } = useGetSeafoodMealsQuery()
@@ -16,95 +165,74 @@ const HomePage = () => {
   const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
+    <div style={styles.page}>
 
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>Recipes</h1>
-        <p style={{ color: '#666' }}>Masarap talaga seafood eh</p>
+      <div style={styles.header}>
+        <h1 style={styles.title}>Seafood Recipes</h1>
+        <p style={styles.subtitle}>Masarap talaga seafood eh</p>
       </div>
 
-      {/* Search Bar */}
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+      {/* Search */}
+      <div style={styles.searchWrap}>
         <input
           type="text"
           placeholder="Search seafood recipes..."
           value={searchQuery}
           onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-          style={{
-            width: '100%',
-            maxWidth: '500px',
-            padding: '12px 20px',
-            fontSize: '1rem',
-            borderRadius: '999px',
-            border: '2px solid #ddd',
-            outline: 'none',
-          }}
+          style={styles.searchInput}
+          onFocus={(e) => (e.target.style.borderColor = '#1b4f6b')}
+          onBlur={(e) => (e.target.style.borderColor = '#ddd')}
         />
       </div>
 
       {/* States */}
-      {isLoading && <p style={{ textAlign: 'center' }}>Loading recipes...</p>}
+      {isLoading && <p style={{ textAlign: 'center', color: '#888' }}>Loading recipes...</p>}
       {isError && <p style={{ textAlign: 'center', color: 'red' }}>Failed to load recipes.</p>}
       {!isLoading && filtered.length === 0 && (
-        <p style={{ textAlign: 'center' }}>No recipes found for "{searchQuery}"</p>
+        <p style={{ textAlign: 'center', color: '#888' }}>No recipes found for "{searchQuery}"</p>
       )}
 
-      {/* Recipe Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-        gap: '24px',
-        marginBottom: '40px'
-      }}>
+      {/* Grid */}
+      <div style={styles.grid}>
         {paginated.map((meal) => {
           const isFav = favorites.includes(meal.idMeal)
           return (
-            <div key={meal.idMeal} style={{
-              borderRadius: '12px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-              background: 'white',
-              transition: 'transform 0.2s',
-            }}>
-              <div style={{ position: 'relative' }}>
-                <img
-                  src={meal.strMealThumb}
-                  alt={meal.strMeal}
-                  style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover' }}
-                />
+            <div
+              key={meal.idMeal}
+              style={styles.card}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.13)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              <div style={styles.imgWrap}>
+                <img src={meal.strMealThumb} alt={meal.strMeal} style={styles.img} />
                 <button
                   onClick={() => dispatch(toggleFavorite(meal.idMeal))}
+                  title={isFav ? 'Remove from favorites' : 'Add to favorites'}
                   style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    background: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '36px',
-                    height: '36px',
-                    fontSize: '1.1rem',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    ...styles.favBtn,
+                    color: isFav ? '#e03e3e' : '#aaa',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 >
                   {isFav ? '♥' : '♡'}
                 </button>
               </div>
-              <div style={{ padding: '16px' }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '12px' }}>{meal.strMeal}</h3>
+
+              <div style={styles.cardBody}>
+                <h3 style={styles.cardTitle}>{meal.strMeal}</h3>
                 <Link
                   to={`/recipe/${meal.idMeal}`}
-                  style={{
-                    display: 'inline-block',
-                    padding: '8px 16px',
-                    background: '#1b4f6b',
-                    color: 'white',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    textDecoration: 'none',
-                  }}
+                  style={styles.viewBtn}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#153d54')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = '#1b4f6b')}
                 >
                   View Recipe
                 </Link>
@@ -116,17 +244,11 @@ const HomePage = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={styles.pagination}>
           <button
             onClick={() => dispatch(setCurrentPage(currentPage - 1))}
             disabled={currentPage === 1}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              background: 'white',
-            }}
+            style={styles.pageBtn(false, currentPage === 1)}
           >
             ← Prev
           </button>
@@ -135,15 +257,7 @@ const HomePage = () => {
             <button
               key={page}
               onClick={() => dispatch(setCurrentPage(page))}
-              style={{
-                padding: '8px 14px',
-                borderRadius: '8px',
-                border: '1px solid #ddd',
-                cursor: 'pointer',
-                background: currentPage === page ? '#1b4f6b' : 'white',
-                color: currentPage === page ? 'white' : 'black',
-                fontWeight: currentPage === page ? 'bold' : 'normal',
-              }}
+              style={styles.pageBtn(currentPage === page, false)}
             >
               {page}
             </button>
@@ -152,13 +266,7 @@ const HomePage = () => {
           <button
             onClick={() => dispatch(setCurrentPage(currentPage + 1))}
             disabled={currentPage === totalPages}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              background: 'white',
-            }}
+            style={styles.pageBtn(false, currentPage === totalPages)}
           >
             Next →
           </button>
