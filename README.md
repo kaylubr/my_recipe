@@ -8,9 +8,9 @@ git config --global user.name <github username>
 git config --global user.email <github email>
 ```
 
-then clone niyo tong repo na to.
+then clone niyo tong repo na to. after that punta kayo sa cloned repo
 ```
-cd my_recipe/my_recipe
+cd my_recipe/
 ```
 
 tapos install dependencies 
