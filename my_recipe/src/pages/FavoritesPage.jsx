@@ -6,7 +6,7 @@ import { toggleFavorite } from '../features/recipeSlice'
 const FavoritesPage = () => {
   const dispatch = useDispatch()
   const { favorites } = useSelector((s) => s.recipes)
-  const { data: meals = [], isLoading } = useGetSeafoodMealsQuery()
+  const { data: meals = [], isLoading, isError } = useGetSeafoodMealsQuery()
 
   // Filter to only favorited meals (cache is already warm from HomePage)
   const favoritedMeals = meals.filter((meal) => favorites.includes(meal.idMeal))
@@ -40,13 +40,20 @@ const FavoritesPage = () => {
         </p>
       </div>
 
-      {/* Loading state (while meals cache hydrates) */}
+      {/* Loading state */}
       {isLoading && (
         <p style={{ textAlign: 'center', color: '#888' }}>Loading...</p>
       )}
 
+      {/* Error state — Bug 2 fix */}
+      {isError && (
+        <p style={{ textAlign: 'center', color: 'red' }}>
+          Failed to load recipes. Please try again later.
+        </p>
+      )}
+
       {/* Empty state */}
-      {!isLoading && favoritedMeals.length === 0 && (
+      {!isLoading && !isError && favoritedMeals.length === 0 && (
         <div
           style={{
             textAlign: 'center',

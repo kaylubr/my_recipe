@@ -42,7 +42,7 @@ const RecipeDetailPage = () => {
     const ingredient = meal[`strIngredient${i}`]
     const measure = meal[`strMeasure${i}`]
     if (ingredient && ingredient.trim()) {
-      ingredients.push(`${measure?.trim()} ${ingredient.trim()}`)
+          ingredients.push([measure?.trim(), ingredient.trim()].filter(Boolean).join(' '))
     }
   }
 
