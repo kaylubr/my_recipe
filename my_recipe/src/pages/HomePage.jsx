@@ -1,9 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { useGetSeafoodMealsQuery
-, useSearchMealsQuery 
-} from '../features/recipeApi'
+import { useGetSeafoodMealsQuery, useGetChickenMealsQuery, useSearchMealsQuery } from '../features/recipeApi'
 import { setSearchQuery, setCurrentPage, toggleFavorite } from '../features/recipeSlice'
 
 const injectFonts = () => {
@@ -43,28 +41,29 @@ const HomePage = () => {
   const isSearching = searchQuery.trim().length > 0
 
   const { data: seafoodMeals = [], isLoading: seafoodLoading, isError: seafoodError } = useGetSeafoodMealsQuery()
+  const { data: chickenMeals = [], isLoading: chickenLoading, isError: chickenError } = useGetChickenMealsQuery()
 
   const { data: searchResults = [], isLoading: searchLoading, isError: searchError } = useSearchMealsQuery(
     searchQuery.trim(),
     { skip: !isSearching }
   )
 
+  const allMeals = useMemo(() => {
+    return [...seafoodMeals, ...chickenMeals].sort((a, b) => a.strMeal.localeCompare(b.strMeal))
+  }, [seafoodMeals, chickenMeals])
 
-
-  const meals = isSearching ? searchResults : seafoodMeals
-  const isLoading = isSearching ? searchLoading : seafoodLoading
-  const isError = isSearching ? searchError : seafoodError
-
+  const meals = isSearching ? searchResults : allMeals
+  const isLoading = isSearching ? searchLoading : (seafoodLoading || chickenLoading)
+  const isError = isSearching ? searchError : (seafoodError || chickenError)
 
   const totalPages = Math.ceil(meals.length / itemsPerPage)
   const paginated = meals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   return (
     <div style={styles.page}>
-
       <div style={styles.header}>
-        <h1 style={styles.title}>Seafood Recipes</h1>
-        <p style={styles.subtitle}>Masarap talaga seafood eh</p>
+        <h1 style={styles.title}>All Recipes</h1>
+        <p style={styles.subtitle}>Seafood & Chicken</p>
       </div>
 
       <div style={styles.searchWrap}>
