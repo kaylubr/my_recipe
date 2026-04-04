@@ -12,7 +12,19 @@ export const recipeApi = createApi({
       query: (id) => `lookup.php?i=${id}`,
       transformResponse: (response) => response.meals?.[0] || null,
     }),
+
+    searchMeals: builder.query({
+      query: (term) => `search.php?s=${encodeURIComponent(term)}`,
+      transformResponse: (response) => response.meals || [],
+    }),
+
   }),
 })
 
-export const { useGetSeafoodMealsQuery, useGetMealByIdQuery } = recipeApi
+export const {
+  useGetSeafoodMealsQuery,
+  useGetMealByIdQuery,
+
+  useSearchMealsQuery,
+
+} = recipeApi
