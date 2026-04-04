@@ -45,9 +45,6 @@ const RecipeDetailPage = () => {
     }
   }
 
-  // Extract YouTube video ID from API 2 strYoutube field
-  const youtubeId = meal.strYoutube ? meal.strYoutube.split('v=')[1] : null
-
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px', fontFamily: "'DM Sans', sans-serif" }}>
 
@@ -55,7 +52,6 @@ const RecipeDetailPage = () => {
         ← Back to Recipes
       </Link>
 
-      {/* Title row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', margin: '20px 0 4px' }}>
         <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.4rem', fontWeight: 700, color: '#111', margin: 0, flex: 1, lineHeight: 1.2 }}>
           {meal.strMeal}
@@ -71,16 +67,13 @@ const RecipeDetailPage = () => {
         </button>
       </div>
 
-      {/* Tags */}
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
         {meal.strCategory && <span style={{ padding: '4px 12px', borderRadius: '999px', background: '#eef4f8', color: '#1b4f6b', fontSize: '0.8rem', fontWeight: 500 }}>{meal.strCategory}</span>}
         {meal.strArea && <span style={{ padding: '4px 12px', borderRadius: '999px', background: '#f0f0f0', color: '#555', fontSize: '0.8rem', fontWeight: 500 }}>{meal.strArea}</span>}
       </div>
 
-      {/* Image */}
       <img src={meal.strMealThumb} alt={meal.strMeal} style={{ width: '100%', borderRadius: '14px', marginBottom: '32px', display: 'block', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
 
-      {/* Ingredients */}
       <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', fontWeight: 600, color: '#111', marginBottom: '16px' }}>Ingredients</h2>
       <ul style={{ marginBottom: '32px', paddingLeft: '0', listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px' }}>
         {ingredients.map((item, idx) => (
@@ -90,31 +83,12 @@ const RecipeDetailPage = () => {
         ))}
       </ul>
 
-      {/* Instructions */}
       <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', fontWeight: 600, color: '#111', marginBottom: '16px' }}>Instructions</h2>
       <div style={{ lineHeight: '1.85', color: '#333', fontSize: '0.95rem', marginBottom: '40px' }}>
         {meal.strInstructions.split('\n').filter(Boolean).map((para, i) => (
           <p key={i} style={{ marginBottom: '14px' }}>{para}</p>
         ))}
       </div>
-
-      {/* YouTube Video — API 2 strYoutube field */}
-      {youtubeId && (
-        <>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', fontWeight: 600, color: '#111', marginBottom: '16px' }}>
-            Watch it being made
-          </h2>
-          <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: '40px' }}>
-            <iframe
-              src={`https://www.youtube.com/embed/${youtubeId}`}
-              title={`${meal.strMeal} video`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-            />
-          </div>
-        </>
-      )}
 
     </div>
   )
