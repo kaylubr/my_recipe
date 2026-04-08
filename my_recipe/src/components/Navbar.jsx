@@ -24,8 +24,8 @@ const Navbar = () => {
         top: 0,
         zIndex: 100,
         background: 'white',
-        borderBottom: '1.5px solid #eee',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+        borderBottom: '1px solid #f0e6dd',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
       }}
     >
       <div
@@ -33,7 +33,7 @@ const Navbar = () => {
           maxWidth: '1200px',
           margin: '0 auto',
           padding: '0 24px',
-          height: '60px',
+          height: '70px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -43,17 +43,20 @@ const Navbar = () => {
         <span
           style={{
             fontFamily: "'Cormorant Garamond', serif",
-            fontSize: '1.4rem',
+            fontSize: '1.6rem',
             fontWeight: 700,
-            color: '#1b4f6b',
-            letterSpacing: '-0.3px',
+            background: 'linear-gradient(135deg, #d97334 0%, #c85e24 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            letterSpacing: '-0.5px',
           }}
         >
-          SeaRecipes
+          RecipeHub
         </span>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '4px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           {[
             { to: '/', label: 'Recipes', exact: true },
             { to: '/favorites', label: `Favorites${favorites.length ? ` (${favorites.length})` : ''}` },
@@ -63,16 +66,27 @@ const Navbar = () => {
               to={to}
               end={exact}
               style={({ isActive }) => ({
-                padding: '7px 16px',
-                borderRadius: '8px',
+                padding: '9px 18px',
+                borderRadius: '10px',
                 textDecoration: 'none',
-                fontSize: '0.9rem',
+                fontSize: '0.95rem',
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 500,
-                background: isActive ? '#1b4f6b' : 'transparent',
-                color: isActive ? 'white' : '#555',
-                transition: 'background 0.15s, color 0.15s',
+                fontWeight: isActive ? 600 : 500,
+                background: isActive ? '#d97334' : 'transparent',
+                color: isActive ? 'white' : '#6b5d54',
+                transition: 'all 0.2s',
+                border: isActive ? 'none' : '1.5px solid transparent',
               })}
+              onMouseEnter={(e) => {
+                if (!window.location.pathname.endsWith(e.currentTarget.getAttribute('href'))) {
+                  e.currentTarget.style.background = '#f5f0eb'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!window.location.pathname.endsWith(e.currentTarget.getAttribute('href'))) {
+                  e.currentTarget.style.background = 'transparent'
+                }
+              }}
             >
               {label}
             </NavLink>

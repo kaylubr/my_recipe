@@ -4,6 +4,23 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useGetMealByIdQuery } from '../features/recipeApi'
 import { toggleFavorite } from '../features/recipeSlice'
 
+const styles = {
+  page: { maxWidth: '900px', margin: '0 auto', padding: '48px 24px', fontFamily: "'DM Sans', sans-serif" },
+  backLink: { textDecoration: 'none', color: '#d97334', fontSize: '0.95rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '32px', transition: 'color 0.2s' },
+  headerWrap: { display: 'flex', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' },
+  title: { fontFamily: "'Cormorant Garamond', serif", fontSize: '3rem', fontWeight: 700, color: '#1a1a1a', margin: 0, flex: 1, lineHeight: 1.1, letterSpacing: '-1px' },
+  favBtn: { flexShrink: 0, background: 'white', border: '2px solid #e8dcd2', borderRadius: '50%', width: '50px', height: '50px', fontSize: '1.4rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', marginTop: '8px' },
+  tags: { display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '36px' },
+  tag: (color) => ({ padding: '6px 14px', borderRadius: '999px', background: color === 'primary' ? 'rgba(217, 115, 52, 0.1)' : '#f5f0eb', color: color === 'primary' ? '#d97334' : '#6b5d54', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }),
+  img: { width: '100%', borderRadius: '16px', marginBottom: '48px', display: 'block', boxShadow: '0 8px 28px rgba(0,0,0,0.12)' },
+  section: { marginBottom: '48px' },
+  sectionTitle: { fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', fontWeight: 700, color: '#1a1a1a', marginBottom: '20px', letterSpacing: '-0.5px' },
+  ingredientsList: { marginBottom: '0', paddingLeft: '0', listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' },
+  ingredientItem: { padding: '12px 16px', background: '#faf5f0', borderRadius: '10px', fontSize: '0.95rem', color: '#3a3a3a', borderLeft: '4px solid #d97334', transition: 'all 0.2s' },
+  instructions: { lineHeight: '1.95', color: '#4a4a4a', fontSize: '1rem' },
+  instructionPara: { marginBottom: '18px' },
+}
+
 const injectFonts = () => {
   if (document.getElementById('recipe-fonts')) return
   const link = document.createElement('link')
@@ -23,13 +40,13 @@ const RecipeDetailPage = () => {
 
   if (isLoading)
     return (
-      <p style={{ textAlign: 'center', padding: '48px', fontFamily: "'DM Sans', sans-serif", color: '#888' }}>
+      <p style={{ textAlign: 'center', padding: '48px', fontFamily: "'DM Sans', sans-serif", color: '#8b7d74', fontSize: '1.05rem' }}>
         Loading recipe...
       </p>
     )
   if (isError || !meal)
     return (
-      <p style={{ textAlign: 'center', padding: '48px', color: 'red', fontFamily: "'DM Sans', sans-serif" }}>
+      <p style={{ textAlign: 'center', padding: '48px', color: '#c83e3e', fontFamily: "'DM Sans', sans-serif", fontSize: '1.05rem' }}>
         Recipe not found.
       </p>
     )
@@ -46,50 +63,72 @@ const RecipeDetailPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px', fontFamily: "'DM Sans', sans-serif" }}>
-
-      <Link to="/" style={{ textDecoration: 'none', color: '#1b4f6b', fontSize: '0.9rem', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+    <div style={styles.page}>
+      <Link
+        to="/"
+        style={styles.backLink}
+        onMouseEnter={(e) => (e.currentTarget.style.color = '#c85e24')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = '#d97334')}
+      >
         ← Back to Recipes
       </Link>
 
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', margin: '20px 0 4px' }}>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.4rem', fontWeight: 700, color: '#111', margin: 0, flex: 1, lineHeight: 1.2 }}>
-          {meal.strMeal}
-        </h1>
+      <div style={styles.headerWrap}>
+        <h1 style={styles.title}>{meal.strMeal}</h1>
         <button
           onClick={() => dispatch(toggleFavorite(meal.idMeal))}
           title={isFav ? 'Remove from favorites' : 'Add to favorites'}
-          style={{ flexShrink: 0, background: 'white', border: '1.5px solid #ddd', borderRadius: '50%', width: '44px', height: '44px', fontSize: '1.3rem', cursor: 'pointer', color: isFav ? '#e03e3e' : '#bbb', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.15s, color 0.15s', marginTop: '4px' }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          style={{ ...styles.favBtn, fontSize: '1.3rem' }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.08)'
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(217, 115, 52, 0.2)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)'
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'
+          }}
         >
-          {isFav ? '♥' : '♡'}
+          {isFav ? '❤️' : '🤍'}
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
-        {meal.strCategory && <span style={{ padding: '4px 12px', borderRadius: '999px', background: '#eef4f8', color: '#1b4f6b', fontSize: '0.8rem', fontWeight: 500 }}>{meal.strCategory}</span>}
-        {meal.strArea && <span style={{ padding: '4px 12px', borderRadius: '999px', background: '#f0f0f0', color: '#555', fontSize: '0.8rem', fontWeight: 500 }}>{meal.strArea}</span>}
+      <div style={styles.tags}>
+        {meal.strCategory && <span style={styles.tag('primary')}>{meal.strCategory}</span>}
+        {meal.strArea && <span style={styles.tag('secondary')}>{meal.strArea}</span>}
       </div>
 
-      <img src={meal.strMealThumb} alt={meal.strMeal} style={{ width: '100%', borderRadius: '14px', marginBottom: '32px', display: 'block', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
+      <img src={meal.strMealThumb} alt={meal.strMeal} style={styles.img} />
 
-      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', fontWeight: 600, color: '#111', marginBottom: '16px' }}>Ingredients</h2>
-      <ul style={{ marginBottom: '32px', paddingLeft: '0', listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px' }}>
-        {ingredients.map((item, idx) => (
-          <li key={idx} style={{ padding: '8px 12px', background: '#f7f9fb', borderRadius: '8px', fontSize: '0.9rem', color: '#333', borderLeft: '3px solid #1b4f6b' }}>
-            {item}
-          </li>
-        ))}
-      </ul>
-
-      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.6rem', fontWeight: 600, color: '#111', marginBottom: '16px' }}>Instructions</h2>
-      <div style={{ lineHeight: '1.85', color: '#333', fontSize: '0.95rem', marginBottom: '40px' }}>
-        {meal.strInstructions.split('\n').filter(Boolean).map((para, i) => (
-          <p key={i} style={{ marginBottom: '14px' }}>{para}</p>
-        ))}
+      <div style={styles.section}>
+        <h2 style={styles.sectionTitle}>Ingredients</h2>
+        <ul style={styles.ingredientsList}>
+          {ingredients.map((item, idx) => (
+            <li
+              key={idx}
+              style={styles.ingredientItem}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#f5f0eb'
+                e.currentTarget.style.transform = 'translateX(4px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#faf5f0'
+                e.currentTarget.style.transform = 'translateX(0)'
+              }}
+            >
+              ✓ {item}
+            </li>
+          ))}
+        </ul>
       </div>
 
+      <div style={styles.section}>
+        <h2 style={styles.sectionTitle}>Instructions</h2>
+        <div style={styles.instructions}>
+          {meal.strInstructions.split('\n').filter(Boolean).map((para, i) => (
+            <p key={i} style={styles.instructionPara}>{para}</p>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
