@@ -52,7 +52,7 @@ const Navbar = () => {
             letterSpacing: '-0.5px',
           }}
         >
-          RecipeHub
+          🍳 RecipeHub
         </span>
 
         {/* Tabs */}
