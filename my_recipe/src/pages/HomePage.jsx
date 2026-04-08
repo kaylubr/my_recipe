@@ -227,7 +227,7 @@ const HomePage = () => {
                   <p style={styles.sectionSubtitle}>Dive into our fresh and delicious seafood collection</p>
                 </div>
                 <div style={styles.grid}>
-                  {seafoodMeals.slice(0, 6).map(renderRecipeCard)}
+                  {seafoodMeals.slice(0, 8).map(renderRecipeCard)}
                 </div>
               </div>
             )}
@@ -240,7 +240,7 @@ const HomePage = () => {
                   <p style={styles.sectionSubtitle}>Explore our favorite chicken recipes</p>
                 </div>
                 <div style={styles.grid}>
-                  {chickenMeals.slice(0, 6).map(renderRecipeCard)}
+                  {chickenMeals.slice(0, 8).map(renderRecipeCard)}
                 </div>
               </div>
             )}
