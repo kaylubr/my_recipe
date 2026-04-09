@@ -1,33 +1,18 @@
-Bago kayo mag start, download kayo wsl para seamless experience lang. (Google niyo installation step by step)
+# RecipeHub
 
-Tapos installan niyo node js yung wsl
+## Members
+- Cajigal, Vincent James A.
+- Corpus, Daniel Louis H.
+- Punzalan, Bren Carl L.
+- Reyes, Kyle Benedict L.
+- Roxas, Joseph D.
 
-Then type niyo to after:
+## Installation
 ```
-git config --global user.name <github username>
-git config --global user.email <github email>
-```
-
-then clone niyo tong repo na to. after that punta kayo sa cloned repo
-```
-cd my_recipe/my_recipe
-```
-
-tapos install dependencies 
-```
-npm install
+cd my_recipe && npm install
 ```
 
-tapos wag kayo basta git commit and push. gawa muna kayo branch para incase mag kandakanda loko na,
-hindi sa pinaka main copy mag apply yung sirang changes.
+Run the dev server:
 ```
-git checkout -b <branch name>
-```
-
-then tsaka niyo ilagay changes niyo. safe na mag git add, commit, and push.
-after niyo magawa changes niyo and tingin niyong wala ng bug, push niyo na and i-merge it sa main branch.
-eto yung commands:
-```
-git checkout main
-git merge <name ng branch na ginawa niyo>
+npm run dev
 ```
