@@ -1,10 +1,15 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useGetSeafoodMealsQuery, useGetChickenMealsQuery } from '../features/recipeApi'
 import { toggleFavorite } from '../features/recipeSlice'
+import Pagination from '../components/Pagination'
+import { SkeletonGrid } from '../components/Skeleton'
+
+const ITEMS_PER_PAGE = 8
 
 const FavoritesPage = () => {
+  const [currentPage, setCurrentPage] = useState(1)
   const dispatch = useDispatch()
   const { favorites } = useSelector((s) => s.recipes)
 
@@ -17,6 +22,12 @@ const FavoritesPage = () => {
   const allMeals = useMemo(() => [...seafoodMeals, ...chickenMeals], [seafoodMeals, chickenMeals])
   const favoritedMeals = useMemo(() => allMeals.filter((meal) => favorites.includes(meal.idMeal)), [allMeals, favorites])
 
+  const totalPages = Math.ceil(favoritedMeals.length / ITEMS_PER_PAGE)
+  const safePage = Math.min(currentPage, Math.max(1, totalPages))
+  const paginated = favoritedMeals.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE)
+
+  const handlePageChange = (page) => setCurrentPage(page)
+
   return (
     <div className="page-container">
       <div className="favorites-header">
@@ -28,7 +39,7 @@ const FavoritesPage = () => {
         </p>
       </div>
 
-      {isLoading && <p className="status-message">Loading...</p>}
+      {isLoading && <SkeletonGrid count={8} />}
       {isError && <p className="status-message status-message--error">Failed to load recipes. Please try again later.</p>}
 
       {!isLoading && !isError && favoritedMeals.length === 0 && (
@@ -38,29 +49,36 @@ const FavoritesPage = () => {
         </div>
       )}
 
-      {favoritedMeals.length > 0 && (
-        <div className="recipe-grid">
-          {favoritedMeals.map((meal) => (
-            <div key={meal.idMeal} className="recipe-card">
-              <div className="recipe-card-image-wrapper">
-                <img src={meal.strMealThumb} alt={meal.strMeal} className="recipe-card-image" />
-                <button
-                  onClick={() => dispatch(toggleFavorite(meal.idMeal))}
-                  title="Remove from favorites"
-                  className="favorite-button favorite-button--active"
-                >
-                  ❤️
-                </button>
+      {paginated.length > 0 && (
+        <>
+          <div className="recipe-grid">
+            {paginated.map((meal) => (
+              <div key={meal.idMeal} className="recipe-card">
+                <div className="recipe-card-image-wrapper">
+                  <img src={meal.strMealThumb} alt={meal.strMeal} className="recipe-card-image" loading="lazy" />
+                  <button
+                    onClick={() => dispatch(toggleFavorite(meal.idMeal))}
+                    title="Remove from favorites"
+                    className="favorite-button favorite-button--active"
+                  >
+                    ❤️
+                  </button>
+                </div>
+                <div className="recipe-card-body">
+                  <h3 className="recipe-card-title">{meal.strMeal}</h3>
+                  <Link to={`/recipe/${meal.idMeal}`} className="view-recipe-button">
+                    View Recipe
+                  </Link>
+                </div>
               </div>
-              <div className="recipe-card-body">
-                <h3 className="recipe-card-title">{meal.strMeal}</h3>
-                <Link to={`/recipe/${meal.idMeal}`} className="view-recipe-button">
-                  View Recipe
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          <Pagination
+            currentPage={safePage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
       )}
     </div>
   )

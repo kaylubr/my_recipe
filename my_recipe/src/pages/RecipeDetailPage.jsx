@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useGetMealByIdQuery } from '../features/recipeApi'
 import { toggleFavorite } from '../features/recipeSlice'
+import { SkeletonDetail } from '../components/Skeleton'
 
 const RecipeDetailPage = () => {
   const { id } = useParams()
@@ -9,7 +10,7 @@ const RecipeDetailPage = () => {
   const { favorites } = useSelector((s) => s.recipes)
   const { data: meal, isLoading, isError } = useGetMealByIdQuery(id)
 
-  if (isLoading) return <p className="detail-loading">Loading recipe...</p>
+  if (isLoading) return <SkeletonDetail />
   if (isError || !meal) return <p className="detail-error">Recipe not found.</p>
 
   const isFav = favorites.includes(meal.idMeal)
@@ -43,7 +44,7 @@ const RecipeDetailPage = () => {
         {meal.strArea && <span className="detail-tag detail-tag--secondary">{meal.strArea}</span>}
       </div>
 
-      <img src={meal.strMealThumb} alt={meal.strMeal} className="detail-image" />
+      <img src={meal.strMealThumb} alt={meal.strMeal} className="detail-image" loading="lazy" />
 
       <div className="detail-section">
         <h2 className="detail-section-title">Ingredients</h2>

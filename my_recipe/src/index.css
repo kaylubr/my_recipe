@@ -315,14 +315,18 @@
 /* ===== Pagination ===== */
 .pagination {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-top: 60px;
+  margin-top: 48px;
+  padding: 16px 0;
 }
 
 .page-button {
-  padding: 10px 16px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 14px;
   border-radius: 10px;
   border: 2px solid #e8dcd2;
   cursor: pointer;
@@ -331,7 +335,17 @@
   font-weight: 500;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-button:hover:not(:disabled):not(.page-button--active) {
+  background: #faf5f0;
+  border-color: #d9a67c;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(217, 115, 52, 0.1);
 }
 
 .page-button--active {
@@ -339,11 +353,40 @@
   background: #d97334;
   color: white;
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(217, 115, 52, 0.3);
+  transform: translateY(-1px);
+}
+
+.page-button--arrow {
+  font-size: 1.1rem;
+  min-width: 42px;
+  padding: 0;
 }
 
 .page-button:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.page-ellipsis {
+  min-width: 32px;
+  text-align: center;
+  color: #8b7d74;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  user-select: none;
+}
+
+.page-info {
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 2px solid #f0e6dd;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #8b7d74;
+  white-space: nowrap;
 }
 
 /* ===== Favorites Page ===== */
@@ -557,4 +600,168 @@
   font-family: 'DM Sans', sans-serif;
   color: #c83e3e;
   font-size: 1.05rem;
+}
+
+/* ===== Skeleton Loading ===== */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f5f0eb;
+}
+
+.skeleton-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(90deg, #f0e6dd 25%, #f8f2ec 50%, #f0e6dd 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-line {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0e6dd 25%, #f8f2ec 50%, #f0e6dd 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-line--title {
+  height: 16px;
+  width: 85%;
+}
+
+.skeleton-line--short {
+  height: 14px;
+  width: 55%;
+}
+
+.skeleton-line--text {
+  height: 14px;
+  width: 100%;
+}
+
+.skeleton-line--back {
+  height: 16px;
+  width: 140px;
+  margin-bottom: 32px;
+}
+
+.skeleton-line--heading {
+  height: 40px;
+  width: 70%;
+  flex: 1;
+}
+
+.skeleton-line--section-title {
+  height: 28px;
+  width: 220px;
+  margin-bottom: 4px;
+}
+
+.skeleton-button {
+  height: 42px;
+  width: 120px;
+  border-radius: 10px;
+  margin-top: 4px;
+  background: linear-gradient(90deg, #f0e6dd 25%, #f8f2ec 50%, #f0e6dd 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Detail page skeleton */
+.skeleton-detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.skeleton-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #f0e6dd 25%, #f8f2ec 50%, #f0e6dd 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-tags {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.skeleton-tag {
+  height: 30px;
+  width: 80px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f0e6dd 25%, #f8f2ec 50%, #f0e6dd 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-detail-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  margin-bottom: 48px;
+  background: linear-gradient(90deg, #f0e6dd 25%, #f8f2ec 50%, #f0e6dd 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-section {
+  margin-bottom: 48px;
+}
+
+.skeleton-section .skeleton-line {
+  margin-bottom: 10px;
+}
+
+.skeleton-ingredients {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.skeleton-ingredient {
+  height: 46px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #f0e6dd 25%, #f8f2ec 50%, #f0e6dd 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* ===== Image Lazy Load Fade-In ===== */
+.recipe-card-image,
+.detail-image {
+  opacity: 0;
+  animation: imgFadeIn 0.4s ease forwards;
+}
+
+@keyframes imgFadeIn {
+  to {
+    opacity: 1;
+  }
 }
