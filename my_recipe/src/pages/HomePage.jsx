@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useGetSeafoodMealsQuery, useGetChickenMealsQuery, useSearchMealsQuery } from '../features/recipeApi'
 import { setSearchQuery, setCurrentPage, toggleFavorite } from '../features/recipeSlice'
+import Pagination from '../components/Pagination'
+import { SkeletonGrid } from '../components/Skeleton'
 
 const FOOD_DESCRIPTIONS = [
   'Fresh seafood and delicious chicken dishes await you',
@@ -15,8 +17,12 @@ const FOOD_DESCRIPTIONS = [
   'Taste international delights from around the world',
 ]
 
+const ITEMS_PER_SECTION = 8
+
 const HomePage = () => {
   const [currentFoodIndex, setCurrentFoodIndex] = useState(0)
+  const [seafoodPage, setSeafoodPage] = useState(1)
+  const [chickenPage, setChickenPage] = useState(1)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,15 +52,23 @@ const HomePage = () => {
   const isLoading = isSearching ? searchLoading : (seafoodLoading || chickenLoading)
   const isError = isSearching ? searchError : (seafoodError || chickenError)
 
-  const totalPages = Math.ceil(meals.length / itemsPerPage)
-  const paginated = meals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  // Search pagination
+  const searchTotalPages = Math.ceil(meals.length / itemsPerPage)
+  const searchPaginated = meals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+  // Category pagination
+  const seafoodTotalPages = Math.ceil(seafoodMeals.length / ITEMS_PER_SECTION)
+  const seafoodPaginated = seafoodMeals.slice((seafoodPage - 1) * ITEMS_PER_SECTION, seafoodPage * ITEMS_PER_SECTION)
+
+  const chickenTotalPages = Math.ceil(chickenMeals.length / ITEMS_PER_SECTION)
+  const chickenPaginated = chickenMeals.slice((chickenPage - 1) * ITEMS_PER_SECTION, chickenPage * ITEMS_PER_SECTION)
 
   const renderRecipeCard = (meal) => {
     const isFav = favorites.includes(meal.idMeal)
     return (
       <div key={meal.idMeal} className="recipe-card">
         <div className="recipe-card-image-wrapper">
-          <img src={meal.strMealThumb} alt={meal.strMeal} className="recipe-card-image" />
+          <img src={meal.strMealThumb} alt={meal.strMeal} className="recipe-card-image" loading="lazy" />
           <button
             onClick={() => dispatch(toggleFavorite(meal.idMeal))}
             title={isFav ? 'Remove from favorites' : 'Add to favorites'}
@@ -98,7 +112,24 @@ const HomePage = () => {
           />
         </div>
 
-        {isLoading && <p className="status-message">Loading delicious recipes...</p>}
+        {isLoading && (
+          <>
+            <div className="section">
+              <div className="section-header">
+                <div className="skeleton-line skeleton-line--section-title" />
+                <div className="skeleton-line skeleton-line--short" />
+              </div>
+              <SkeletonGrid count={8} />
+            </div>
+            <div className="section">
+              <div className="section-header">
+                <div className="skeleton-line skeleton-line--section-title" />
+                <div className="skeleton-line skeleton-line--short" />
+              </div>
+              <SkeletonGrid count={8} />
+            </div>
+          </>
+        )}
         {isError && <p className="status-message status-message--error">Failed to load recipes.</p>}
         {!isLoading && !isError && meals.length === 0 && (
           <p className="status-message">No recipes found for &ldquo;{searchQuery}&rdquo;</p>
@@ -111,11 +142,19 @@ const HomePage = () => {
               <div className="section">
                 <div className="section-header">
                   <h2 className="section-title">Seafood Specialties</h2>
-                  <p className="section-subtitle">Dive into our fresh and delicious seafood collection</p>
+                  <p className="section-subtitle">
+                    Dive into our fresh and delicious seafood collection
+                    — {seafoodMeals.length} recipes
+                  </p>
                 </div>
                 <div className="recipe-grid">
-                  {seafoodMeals.slice(0, 8).map(renderRecipeCard)}
+                  {seafoodPaginated.map(renderRecipeCard)}
                 </div>
+                <Pagination
+                  currentPage={seafoodPage}
+                  totalPages={seafoodTotalPages}
+                  onPageChange={setSeafoodPage}
+                />
               </div>
             )}
 
@@ -123,11 +162,19 @@ const HomePage = () => {
               <div className="section">
                 <div className="section-header">
                   <h2 className="section-title">Chicken Recipes</h2>
-                  <p className="section-subtitle">Explore our favorite chicken recipes</p>
+                  <p className="section-subtitle">
+                    Explore our favorite chicken recipes
+                    — {chickenMeals.length} recipes
+                  </p>
                 </div>
                 <div className="recipe-grid">
-                  {chickenMeals.slice(0, 8).map(renderRecipeCard)}
+                  {chickenPaginated.map(renderRecipeCard)}
                 </div>
+                <Pagination
+                  currentPage={chickenPage}
+                  totalPages={chickenTotalPages}
+                  onPageChange={setChickenPage}
+                />
               </div>
             )}
           </>
@@ -141,36 +188,13 @@ const HomePage = () => {
               <p className="section-subtitle">Found {meals.length} recipe{meals.length !== 1 ? 's' : ''}</p>
             </div>
             <div className="recipe-grid">
-              {paginated.map(renderRecipeCard)}
+              {searchPaginated.map(renderRecipeCard)}
             </div>
-
-            {totalPages > 1 && (
-              <div className="pagination">
-                <button
-                  onClick={() => dispatch(setCurrentPage(currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="page-button"
-                >
-                  ← Prev
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => dispatch(setCurrentPage(page))}
-                    className={`page-button ${currentPage === page ? 'page-button--active' : ''}`}
-                  >
-                    {page}
-                  </button>
-                ))}
-                <button
-                  onClick={() => dispatch(setCurrentPage(currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="page-button"
-                >
-                  Next →
-                </button>
-              </div>
-            )}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={searchTotalPages}
+              onPageChange={(page) => dispatch(setCurrentPage(page))}
+            />
           </div>
         )}
       </div>
